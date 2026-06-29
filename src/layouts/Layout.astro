@@ -77,9 +77,17 @@ const { background } = config;
     height: 100%;
     margin: 0;
   }
-  
-  /* 浅色模式下提高遮罩浓度，确保深色文字可读性 */
+
+  /* 浅色模式：高遮罩浓度保证深色文字可读 */
   html:not(.dark) .background-overlay {
     opacity: 0.82 !important;
   }
-</style>
+
+  /* 暗色模式：虚空压在亮背景图上，提浓遮罩并轻虚化，
+     既压住亮度峰值让灰字可读，又保留背景图的色温氛围 */
+  html.dark .background-overlay {
+    opacity: 0.72 !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  </style>

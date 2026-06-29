@@ -106,8 +106,8 @@
     --secondary: oklch(0.20 0.02 270);
     --secondary-foreground: oklch(0.93 0.01 90);
     --muted: oklch(0.20 0.02 270);
-    /* Caption – muted lavender-gray */
-    --muted-foreground: oklch(0.52 0.03 270);
+    /* Caption – 虚空中提亮一档，确保压在亮背景图上仍可读 */
+    --muted-foreground: oklch(0.66 0.02 270);
     /* Dimension – teal for interactivity */
     --accent: oklch(0.72 0.12 180);
     --accent-foreground: oklch(0.13 0.02 270);

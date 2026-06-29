@@ -16,14 +16,17 @@
 /
 ├── public/                  # 静态资源（头像、favicon）
 ├── src/
-│   ├── components/          # Astro / React 组件
-│   │   ├── ui/              # shadcn 基础组件
-│   │   ├── BlogNav.astro    # 博客导航栏
-│   │   ├── BlogPostCard.astro
-│   │   ├── ThemeToggle.astro # 主题切换按钮
-│   │   ├── InfoCard.tsx
-│   │   ├── SocialLinks.tsx
-│   │   └── Typewriter.tsx
+│   ├── components/
+│   │   ├── astro/            # Astro 组件
+│   │   │   ├── BlogNav.astro
+│   │   │   ├── BlogPostCard.astro
+│   │   │   └── ThemeToggle.astro
+│   │   └── react/            # React 组件
+│   │       ├── ui/           # shadcn 基础组件
+│   │       │   └── button.tsx
+│   │       ├── InfoCard.tsx
+│   │       ├── SocialLinks.tsx
+│   │       └── Typewriter.tsx
 │   ├── config/
 │   │   └── site.yaml        # 站点配置（首页内容）
 │   ├── content/
@@ -83,8 +86,8 @@ draft: false                    # 可选，true 时不会发布
 | `src/lib/blog.ts` | `getPublishedPosts()`（排除草稿，按 `pubDate` 倒序）、`readingTime()`、`formatDate()`、`BlogPost` 类型 |
 | `src/pages/blog/index.astro` | 博客列表页 `/blog` |
 | `src/pages/blog/[...slug].astro` | 文章详情页，正文样式位于 `.prose-rift` |
-| `src/components/BlogNav.astro` | 博客页顶部导航栏，集成了主题切换按钮 |
-| `src/components/ThemeToggle.astro` | 主题切换组件，支持 Sun/Moon 旋转动画与状态同步 |
+| `src/components/astro/BlogNav.astro` | 博客页顶部导航栏，集成了主题切换按钮 |
+| `src/components/astro/ThemeToggle.astro` | 主题切换组件，支持 Sun/Moon 旋转动画与状态同步 |
 
 **新增一篇文章**：在 `src/content/blog/` 下新建 `.md` 文件即可，文件名即为 URL slug（`welcome.md` → `/blog/welcome`），无需改动代码。首页（`src/pages/index.astro`）在社交链接下方已链接到 `/blog`。
 

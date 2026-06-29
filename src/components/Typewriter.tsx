@@ -3,6 +3,11 @@
  *
  * 通过 uapis.cn 浏览器 SDK 获取一句话，循环「打字 → 停留 → 删除 → 停留 → 换句」。
  * 需要以 client:load 指令挂载。
+ *
+ * 设计要点：
+ * - 数据请求与打字循环仅在挂载时启动一次。即便父组件重渲染（如开发模式 HMR、
+ *   或传入的对象引用变化），也不会重新发起请求。
+ * - 光标闪烁交由 CSS 动画驱动，不占用 JS 定时器与渲染周期。
  */
 import { useEffect, useRef, useState } from "react";
 import { getSaying } from "@/lib/uapis";
@@ -28,11 +33,13 @@ export default function Typewriter({
 }: Props) {
   const [text, setText] = useState(placeholder);
   const [phase, setPhase] = useState<Phase>("loading");
-  const [visible, setVisible] = useState(true);
+
+  // 把配置存进 ref，effect 只在挂载时读取一次，避免依赖变化导致重新请求
+  const configRef = useRef({ fallback, typeSpeed, deleteSpeed, holdAfterTyped, holdAfterDeleted });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 串行化的状态机，避免多个 setTimeout 竞争
   useEffect(() => {
+    const { fallback, typeSpeed, deleteSpeed, holdAfterTyped, holdAfterDeleted } = configRef.current;
     let active = true;
 
     const clear = () => {
@@ -88,22 +95,11 @@ export default function Typewriter({
 
     fetchSaying();
 
-    // 光标闪烁：在 holding / typing 阶段保持常亮，其余阶段闪烁
-    const blink = setInterval(() => {
-      setVisible((v) => !v);
-    }, 530);
-    const reveal = () => {
-      if (phase === "typing" || phase === "holding") setVisible(true);
-    };
-    reveal();
-
     return () => {
       active = false;
       clear();
-      clearInterval(blink);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fallback, typeSpeed, deleteSpeed, holdAfterTyped, holdAfterDeleted]);
+  }, []);
 
   return (
     <span className="inline-flex items-center min-h-[1.5em]">
@@ -114,7 +110,6 @@ export default function Typewriter({
           "typewriter-cursor ml-0.5 inline-block w-[2px] self-stretch bg-primary " +
           (phase === "typing" || phase === "holding" ? "" : "is-blink")
         }
-        style={{ opacity: visible ? 1 : 0 }}
       />
     </span>
   );

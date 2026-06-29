@@ -112,7 +112,7 @@ export default function Typewriter({
       <span
         aria-hidden="true"
         className={
-          "typewriter-cursor ml-0.5 inline-block w-[2px] self-stretch bg-foreground/80 " +
+          "typewriter-cursor ml-0.5 inline-block w-[2px] self-stretch bg-primary " +
           (phase === "typing" || phase === "holding" ? "" : "is-blink")
         }
         style={{ opacity: visible ? 1 : 0 }}

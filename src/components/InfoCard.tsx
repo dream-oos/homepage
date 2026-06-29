@@ -17,22 +17,22 @@ interface Props {
 
 export default function InfoCard({ item, side, index }: Props) {
   const Icon = getIcon(item.icon);
-  const delay = 200 + index * 120;
+  const delay = 300 + index * 100;
   const animationClass =
     side === "left"
-      ? "animate-in fade-in slide-in-from-left-8 duration-700 ease-out fill-mode-both"
-      : "animate-in fade-in slide-in-from-right-8 duration-700 ease-out fill-mode-both";
+      ? "animate-in fade-in slide-in-from-left-6 duration-600 ease-out fill-mode-both"
+      : "animate-in fade-in slide-in-from-right-6 duration-600 ease-out fill-mode-both";
 
   const inner = (
     <div className="flex items-center gap-3">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-muted/40 text-foreground/80 transition-colors">
-        <Icon size={18} />
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-accent/15 group-hover:text-accent">
+        <Icon size={16} />
       </span>
-      <span className="flex flex-col">
-        <span className="text-xs uppercase tracking-wider text-muted-foreground">
+      <span className="flex flex-col gap-0.5">
+        <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
           {item.label}
         </span>
-        <span className="text-sm font-medium text-foreground/90">
+        <span className="text-sm font-medium text-foreground/85 transition-colors duration-300 group-hover:text-foreground">
           {item.value}
         </span>
       </span>
@@ -40,7 +40,8 @@ export default function InfoCard({ item, side, index }: Props) {
   );
 
   const cls =
-    "group rounded-2xl border border-border/50 bg-card/40 px-4 py-3 backdrop-blur-md transition-all duration-300 hover:border-border hover:bg-card/60 hover:-translate-y-0.5 " +
+    "group rounded-lg border border-border/40 bg-card/50 px-4 py-3 transition-all duration-300 " +
+    "hover:border-primary/40 hover:bg-card/80 " +
     animationClass;
 
   return (

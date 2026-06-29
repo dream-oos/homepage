@@ -19,18 +19,21 @@ const { avatar, background, info, hitokoto, social, site } = config;
       class="h-full w-full object-cover"
       loading="eager"
     />
+    <!-- 主遮罩 -->
     <div
       class="absolute inset-0 bg-background"
       style={`opacity: ${background.overlay}`}
     >
     </div>
+    <!-- 扫描线纹理 -->
+    <div class="scan-lines absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   </div>
 
   <!-- 主内容 -->
-  <main class="relative mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-6 py-16">
+  <main class="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 py-20">
     <!-- 三栏布局：左信息 · 中头像 · 右信息 -->
     <div
-      class="grid w-full grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto_1fr] md:gap-8"
+      class="grid w-full grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto_1fr] md:gap-12"
     >
       <!-- 左侧词条 -->
       <ul class="order-2 flex flex-col gap-3 md:order-1 md:items-end">
@@ -40,19 +43,21 @@ const { avatar, background, info, hitokoto, social, site } = config;
       </ul>
 
       <!-- 中心头像 -->
-      <div class="order-1 flex flex-col items-center gap-5 md:order-2">
-        <div class="avatar-ring relative">
-          <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-indigo-500 via-fuchsia-500 to-pink-500 opacity-70 blur-md animate-in fade-in zoom-in-105 duration-1000 fill-mode-both">
-          </div>
+      <div class="order-1 flex flex-col items-center gap-6 md:order-2">
+        <div class="rift-ring relative">
+          <!-- 光晕 -->
+          <div class="rift-glow absolute -inset-3 rounded-full opacity-40 blur-xl"></div>
+          <!-- 旋转边框 -->
+          <div class="rift-border absolute -inset-[3px] rounded-full"></div>
           <img
             src={avatar.src}
             alt={avatar.alt}
-            class="relative h-36 w-36 rounded-full border-4 border-background/80 object-cover shadow-2xl animate-in fade-in zoom-in-110 duration-700 fill-mode-both"
+            class="relative h-36 w-36 rounded-full border-[3px] border-background object-cover shadow-2xl animate-in fade-in zoom-in-105 duration-700 fill-mode-both"
             loading="eager"
           />
         </div>
-        <div class="flex flex-col items-center gap-1 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:300ms]">
-          <h1 class="text-2xl font-semibold tracking-tight text-foreground">
+        <div class="flex flex-col items-center gap-1.5 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:300ms]">
+          <h1 class="font-heading text-2xl font-semibold tracking-tight text-foreground">
             {avatar.name}
           </h1>
           <p class="text-sm text-muted-foreground">{avatar.tagline}</p>
@@ -70,7 +75,7 @@ const { avatar, background, info, hitokoto, social, site } = config;
     <!-- 一言打字效果 -->
     {
       hitokoto.enabled && (
-        <div class="mt-12 flex min-h-[2rem] w-full max-w-2xl items-center justify-center px-4 text-center animate-in fade-in slide-in-from-bottom-3 duration-700 fill-mode-both [animation-delay:700ms]">
+        <div class="mt-14 flex min-h-[2rem] w-full max-w-xl items-center justify-center px-4 text-center animate-in fade-in slide-in-from-bottom-3 duration-700 fill-mode-both [animation-delay:700ms]">
           <Typewriter
             placeholder={hitokoto.placeholder}
             fallback={hitokoto.fallback}
@@ -96,14 +101,73 @@ const { avatar, background, info, hitokoto, social, site } = config;
 </Layout>
 
 <style>
-  /* 头像悬浮光环呼吸动画 */
-  .avatar-ring::before {
+  /* 扫描线纹理 – CRT / 漫画网点质感 */
+  .scan-lines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.04) 3px,
+      rgba(0, 0, 0, 0.04) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+
+  /* ===== Rift Ring – 维度裂隙旋转光环 ===== */
+
+  /* 柔光晕 */
+  .rift-glow {
+    background: conic-gradient(
+      from var(--rift-angle, 0deg),
+      oklch(0.58 0.22 18),
+      oklch(0.72 0.12 180),
+      oklch(0.58 0.22 18)
+    );
+    animation: rift-spin 8s linear infinite;
+  }
+
+  /* 旋转边框环 */
+  .rift-border {
+    background: conic-gradient(
+      from var(--rift-angle, 0deg),
+      oklch(0.58 0.22 18),
+      oklch(0.72 0.12 180),
+      oklch(0.58 0.22 18)
+    );
+    /* 用 mask 只保留外圈 3px 环形 */
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 3px),
+      #000 calc(100% - 2.5px)
+    );
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - 3px),
+      #000 calc(100% - 2.5px)
+    );
+    animation: rift-spin 8s linear infinite;
+  }
+
+  @keyframes rift-spin {
+    to {
+      --rift-angle: 360deg;
+    }
+  }
+
+  /* 悬停时光晕增强 */
+  .rift-ring:hover .rift-glow {
+    opacity: 0.65;
+    filter: blur(28px);
+  }
+
+  /* 外圈呼吸环 */
+  .rift-ring::before {
     content: "";
     position: absolute;
-    inset: -8px;
+    inset: -10px;
     border-radius: 9999px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    animation: ring-breathe 4s ease-in-out infinite;
+    border: 1px solid oklch(0.93 0.01 90 / 0.1);
+    animation: ring-breathe 5s ease-in-out infinite;
     pointer-events: none;
   }
 
@@ -111,11 +175,11 @@ const { avatar, background, info, hitokoto, social, site } = config;
     0%,
     100% {
       transform: scale(1);
-      opacity: 0.5;
+      opacity: 0.3;
     }
     50% {
-      transform: scale(1.08);
-      opacity: 0.9;
+      transform: scale(1.06);
+      opacity: 0.6;
     }
   }
 
@@ -132,6 +196,20 @@ const { avatar, background, info, hitokoto, social, site } = config;
     50.01%,
     100% {
       opacity: 0;
+    }
+  }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .rift-glow,
+    .rift-border {
+      animation: none;
+    }
+    .rift-ring::before {
+      animation: none;
+    }
+    .scan-lines {
+      display: none;
     }
   }
 </style>

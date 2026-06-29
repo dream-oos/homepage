@@ -1,0 +1,289 @@
+---
+/**
+ * 博客文章详情页
+ *
+ * 动态路由，为每篇已发布的文章生成独立页面。
+ * @route /blog/:slug
+ */
+
+import Layout from "@/layouts/Layout.astro";
+import BlogNav from "@/components/BlogNav.astro";
+import { getPublishedPosts, formatDate, readingTime } from "@/lib/blog";
+import { render } from "astro:content";
+import type { BlogPost } from "@/lib/blog";
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props as { post: BlogPost };
+const { Content } = await render(post);
+const minutes = readingTime(post.body ?? "");
+---
+
+<Layout title={`${post.data.title} · 博客`} description={post.data.description}>
+  <!-- 背景层 -->
+  <div class="fixed inset-0 -z-10 bg-background">
+    <div class="scan-lines fixed inset-0 pointer-events-none" aria-hidden="true"></div>
+  </div>
+
+  <BlogNav current="blog" />
+
+  <main class="relative pt-12">
+    <article class="mx-auto max-w-2xl px-6 py-16">
+      <!-- 文章头部 -->
+      <header>
+        <div class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+          <time datetime={post.data.pubDate.toISOString()}>
+            {formatDate(post.data.pubDate)}
+          </time>
+          <span aria-hidden="true">&middot;</span>
+          <span>{minutes} 分钟阅读</span>
+          {post.data.tags.length > 0 && (
+            <>
+              <span aria-hidden="true">&middot;</span>
+              <ul class="flex flex-wrap gap-1.5">
+                {post.data.tags.map((tag: string) => (
+                  <li
+                    class="rounded-full border border-border/40 bg-card px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground"
+                  >
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+        <h1 class="mt-4 font-heading text-3xl font-semibold tracking-tight text-foreground">
+          {post.data.title}
+        </h1>
+        <p class="mt-2 text-sm text-muted-foreground">
+          {post.data.description}
+        </p>
+      </header>
+
+      <!-- 裂隙装饰线 -->
+      <div class="rift-line my-10 h-0.5 w-full"></div>
+
+      <!-- 文章正文 -->
+      <div class="prose-rift">
+        <Content />
+      </div>
+
+      <!-- 返回链接 -->
+      <div class="mt-16 border-t border-border/40 pt-8">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-accent"
+        >
+          <span aria-hidden="true">&larr;</span>
+          返回博客
+        </a>
+      </div>
+    </article>
+  </main>
+</Layout>
+
+<style>
+  .scan-lines {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0, 0, 0, 0.04) 3px,
+      rgba(0, 0, 0, 0.04) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+
+  .rift-line {
+    background: conic-gradient(
+      from var(--rift-angle, 0deg),
+      oklch(0.58 0.22 18),
+      oklch(0.72 0.12 180),
+      oklch(0.58 0.22 18)
+    );
+    animation: rift-spin 8s linear infinite;
+  }
+
+  @keyframes rift-spin {
+    to {
+      --rift-angle: 360deg;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rift-line {
+      animation: none;
+    }
+    .scan-lines {
+      display: none;
+    }
+  }
+</style>
+
+<style is:global>
+  /* ===== Prose styling for blog content ===== */
+  .prose-rift h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--primary, oklch(0.58 0.22 18));
+    color: var(--foreground, oklch(0.93 0.01 90));
+  }
+
+  .prose-rift h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--foreground, oklch(0.93 0.01 90));
+  }
+
+  .prose-rift p {
+    color: color-mix(in oklch, var(--foreground, oklch(0.93 0.01 90)) 85%, transparent);
+    line-height: 1.75;
+    margin-bottom: 1.25rem;
+  }
+
+  .prose-rift a {
+    color: var(--accent, oklch(0.72 0.12 180));
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: opacity 0.2s;
+  }
+
+  .prose-rift a:hover {
+    opacity: 0.8;
+  }
+
+  .prose-rift ul,
+  .prose-rift ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+    color: color-mix(in oklch, var(--foreground, oklch(0.93 0.01 90)) 85%, transparent);
+    line-height: 1.75;
+  }
+
+  .prose-rift ul {
+    list-style-type: disc;
+  }
+
+  .prose-rift ol {
+    list-style-type: decimal;
+  }
+
+  .prose-rift li {
+    margin-bottom: 0.25rem;
+  }
+
+  .prose-rift li::marker {
+    color: var(--primary, oklch(0.58 0.22 18));
+  }
+
+  .prose-rift blockquote {
+    border-left: 3px solid var(--primary, oklch(0.58 0.22 18));
+    background: color-mix(in oklch, var(--card, oklch(0.17 0.02 270)) 40%, transparent);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1.5rem 0;
+    color: color-mix(in oklch, var(--foreground, oklch(0.93 0.01 90)) 75%, transparent);
+    font-style: italic;
+  }
+
+  .prose-rift blockquote p:last-child {
+    margin-bottom: 0;
+  }
+
+  .prose-rift code:not(pre code) {
+    background: var(--muted, oklch(0.20 0.02 270));
+    color: var(--primary, oklch(0.58 0.22 18));
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.375rem;
+    font-size: 0.8125rem;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .prose-rift pre {
+    background: var(--card, oklch(0.17 0.02 270));
+    border: 1px solid var(--border, oklch(0.24 0.02 270));
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+
+  .prose-rift pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
+    font-size: inherit;
+  }
+
+  .prose-rift hr {
+    border: none;
+    height: 2px;
+    background: conic-gradient(
+      from var(--rift-angle, 0deg),
+      oklch(0.58 0.22 18),
+      oklch(0.72 0.12 180),
+      oklch(0.58 0.22 18)
+    );
+    animation: rift-spin 8s linear infinite;
+    margin: 2.5rem 0;
+  }
+
+  .prose-rift img {
+    border-radius: 0.75rem;
+    border: 1px solid var(--border, oklch(0.24 0.02 270));
+    max-width: 100%;
+    height: auto;
+  }
+
+  .prose-rift strong {
+    color: var(--foreground, oklch(0.93 0.01 90));
+    font-weight: 600;
+  }
+
+  .prose-rift table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  .prose-rift th,
+  .prose-rift td {
+    border: 1px solid var(--border, oklch(0.24 0.02 270));
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+  }
+
+  .prose-rift th {
+    background: var(--muted, oklch(0.20 0.02 270));
+    font-weight: 600;
+    color: var(--foreground, oklch(0.93 0.01 90));
+  }
+
+  .prose-rift td {
+    color: color-mix(in oklch, var(--foreground, oklch(0.93 0.01 90)) 85%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .prose-rift hr {
+      animation: none;
+    }
+  }
+</style>

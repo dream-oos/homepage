@@ -17,11 +17,6 @@ const posts = await getPublishedPosts();
 ---
 
 <Layout title={`${site.title} · 博客`} description="字里行间的裂隙——技术、设计与生活的记录">
-  <!-- 背景层 -->
-  <div class="fixed inset-0 -z-10 bg-background">
-    <div class="scan-lines fixed inset-0 pointer-events-none" aria-hidden="true"></div>
-  </div>
-
   <BlogNav current="blog" />
 
   <main class="relative pt-12">
@@ -60,17 +55,6 @@ const posts = await getPublishedPosts();
 </Layout>
 
 <style>
-  .scan-lines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0, 0, 0, 0.04) 3px,
-      rgba(0, 0, 0, 0.04) 4px
-    );
-    mix-blend-mode: multiply;
-  }
-
   .rift-line {
     background: conic-gradient(
       from var(--rift-angle, 0deg),
@@ -90,9 +74,6 @@ const posts = await getPublishedPosts();
   @media (prefers-reduced-motion: reduce) {
     .rift-line {
       animation: none;
-    }
-    .scan-lines {
-      display: none;
     }
   }
 </style>

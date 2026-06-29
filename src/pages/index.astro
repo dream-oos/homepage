@@ -3,30 +3,17 @@ import Layout from "@/layouts/Layout.astro";
 import InfoCard from "@/components/InfoCard.tsx";
 import SocialLinks from "@/components/SocialLinks.tsx";
 import Typewriter from "@/components/Typewriter.tsx";
+import ThemeToggle from "@/components/ThemeToggle.astro";
 import { getSiteConfig } from "@/lib/site";
 
 const config = getSiteConfig();
-const { avatar, background, info, hitokoto, social, site } = config;
+const { avatar, info, hitokoto, social, site } = config;
 ---
 
 <Layout title={site.title} description={avatar.tagline}>
-  <!-- 背景层 -->
-  <div class="fixed inset-0 -z-10 overflow-hidden">
-    <img
-      src={background.src}
-      alt=""
-      aria-hidden="true"
-      class="h-full w-full object-cover"
-      loading="eager"
-    />
-    <!-- 主遮罩 -->
-    <div
-      class="absolute inset-0 bg-background"
-      style={`opacity: ${background.overlay}`}
-    >
-    </div>
-    <!-- 扫描线纹理 -->
-    <div class="scan-lines absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+  <!-- 顶部主题切换浮动按钮 -->
+  <div class="fixed top-4 right-6 z-50 flex items-center gap-3">
+    <ThemeToggle />
   </div>
 
   <!-- 主内容 -->
@@ -109,18 +96,6 @@ const { avatar, background, info, hitokoto, social, site } = config;
 </Layout>
 
 <style>
-  /* 扫描线纹理 – CRT / 漫画网点质感 */
-  .scan-lines {
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0, 0, 0, 0.04) 3px,
-      rgba(0, 0, 0, 0.04) 4px
-    );
-    mix-blend-mode: multiply;
-  }
-
   /* ===== Rift Ring – 维度裂隙旋转光环 ===== */
 
   /* 柔光晕 */
@@ -207,7 +182,6 @@ const { avatar, background, info, hitokoto, social, site } = config;
     }
   }
 
-  /* Reduced motion */
   @media (prefers-reduced-motion: reduce) {
     .rift-glow,
     .rift-border {
@@ -215,9 +189,6 @@ const { avatar, background, info, hitokoto, social, site } = config;
     }
     .rift-ring::before {
       animation: none;
-    }
-    .scan-lines {
-      display: none;
     }
   }
 </style>

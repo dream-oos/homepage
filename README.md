@@ -35,9 +35,8 @@
 │   │   ├── blog.ts          # 博客查询 / 阅读时间 / 日期
 │   │   ├── site.ts          # 站点配置加载器
 │   │   ├── icons.tsx
-│   │   └── uapis.ts         # 一言 API
+│   │   └── uapis.ts         # 一言客户端（浏览器 SDK）
 │   ├── pages/
-│   │   ├── api/saying.ts    # 一言代理端点
 │   │   ├── blog/
 │   │   │   ├── index.astro          # 博客列表页 /blog
 │   │   │   └── [...slug].astro      # 文章详情页 /blog/:slug

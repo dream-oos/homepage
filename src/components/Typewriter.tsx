@@ -1,10 +1,11 @@
 /**
  * 一言打字效果组件
  *
- * 通过本地代理 /api/saying 获取一句话，循环「打字 → 停留 → 删除 → 停留 → 换句」。
+ * 通过 uapis.cn 浏览器 SDK 获取一句话，循环「打字 → 停留 → 删除 → 停留 → 换句」。
  * 需要以 client:load 指令挂载。
  */
 import { useEffect, useRef, useState } from "react";
+import { getSaying } from "@/lib/uapis";
 
 interface Props {
   placeholder?: string;
@@ -42,10 +43,8 @@ export default function Typewriter({
     async function fetchSaying(): Promise<void> {
       setPhase("loading");
       try {
-        const res = await fetch("/api/saying");
-        if (!res.ok) throw new Error("请求失败");
-        const data = (await res.json()) as { text?: string };
-        const content = data.text?.trim() || fallback;
+        const data = await getSaying();
+        const content = data.text || fallback;
         if (active) startTyping(content);
       } catch {
         if (active) startTyping(fallback);

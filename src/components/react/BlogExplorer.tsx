@@ -2,8 +2,9 @@
  * BlogExplorer —— 博客列表交互核心
  *
  * 在一个 React 岛屿中实现标签筛选、实时搜索与分页，状态同步到 URL（?tag / ?q / ?page），
- * 便于分享与刷新保持。静态构建下，初始状态（无筛选、第 1 页）由 Astro SSR 渲染，
- * 挂载后再读取 URL 参数应用筛选，因此首屏 HTML 完整、对 SEO 友好，且无水合不匹配。
+ * 便于分享与刷新保持。搜索支持拼音模糊匹配（全拼 / 首字母 / 部分输入），命中处高亮。
+ * 静态构建下，初始状态（无筛选、第 1 页）由 Astro SSR 渲染，挂载后再读取 URL 参数应用筛选，
+ * 因此首屏 HTML 完整、对 SEO 友好，且无水合不匹配。
  *
  * 注意：本组件运行在客户端，不能直接 import `@/lib/blog`（其依赖 `astro:content`）。
  * 文章数据由列表页在构建期序列化为 PostSummary[] 传入；类型以 `import type` 引入，
@@ -12,6 +13,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { PostSummary, TagCount } from "@/lib/blog";
+import { pinyinMatch } from "@/lib/pinyin";
 import PostCard from "./PostCard";
 
 interface Props {
@@ -86,16 +88,16 @@ export default function BlogExplorer({
     if (hydrated) writeUrl(tag, query, page);
   }, [tag, query, page, hydrated]);
 
-  // 过滤
+  // 过滤：标题 / 描述 / 标签任一命中即保留，支持拼音模糊匹配
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = query.trim();
     return posts.filter((p) => {
       if (tag && !p.tags.includes(tag)) return false;
       if (!q) return true;
       return (
-        p.title.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q))
+        pinyinMatch(p.title, q) ||
+        pinyinMatch(p.description, q) ||
+        p.tags.some((t) => pinyinMatch(t, q))
       );
     });
   }, [posts, tag, query]);
@@ -166,7 +168,7 @@ export default function BlogExplorer({
               onSearch("");
             }
           }}
-          placeholder="在裂隙中搜索文章…"
+          placeholder="搜索标题、标签（支持拼音 sheji / sj）…"
           aria-label="搜索文章"
           className="w-full border-b border-border/60 bg-transparent pb-2 pl-6 pr-16 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-accent focus:outline-none"
         />
@@ -251,7 +253,12 @@ export default function BlogExplorer({
       ) : (
         <div className="flex flex-col gap-5">
           {pageItems.map((post, i) => (
-            <PostCard key={post.id} post={post} index={i} />
+            <PostCard
+              key={post.id}
+              post={post}
+              index={i}
+              query={query.trim()}
+            />
           ))}
         </div>
       )}

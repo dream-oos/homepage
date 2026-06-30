@@ -8,7 +8,9 @@
 
 import Layout from "@/layouts/Layout.astro";
 import BlogNav from "@/components/astro/BlogNav.astro";
+import Comments from "@/components/react/Comments.tsx";
 import { getPublishedPosts, formatDate, readingTime } from "@/lib/blog";
+import { getSiteConfig } from "@/lib/site";
 import { render } from "astro:content";
 import type { BlogPost } from "@/lib/blog";
 
@@ -23,6 +25,7 @@ export async function getStaticPaths() {
 const { post } = Astro.props as { post: BlogPost };
 const { Content } = await render(post);
 const minutes = readingTime(post.body ?? "");
+const { comments } = getSiteConfig();
 ---
 
 <Layout title={`${post.data.title} · 博客`} description={post.data.description}>
@@ -79,6 +82,9 @@ const minutes = readingTime(post.body ?? "");
           返回博客
         </a>
       </div>
+
+      <!-- 评论系统（滚动进入视口后懒加载） -->
+      <Comments config={comments} client:visible />
     </article>
   </main>
 </Layout>
@@ -266,5 +272,61 @@ const minutes = readingTime(post.body ?? "");
     .prose-rift hr {
       animation: none;
     }
+  }
+
+  /* ===== 评论系统主题适配 =====
+     Waline / Twikoo 各自注入 DOM，样式无法走 Astro 作用域，故在此全局覆盖。
+     通过它们暴露的 CSS 变量对齐站点裂隙配色，避免覆盖内部类名，
+     降低随版本升级而失效的风险。两者 dark 模式由 Comments 组件传入
+     dark:'html.dark' 跟随站点切换。 */
+  .comments-rift {
+    /* Waline —— 主色 → 裂隙红，交互色 → 维度青 */
+    --waline-theme-color: var(--primary);
+    --waline-active-color: var(--accent);
+    --waline-bg-color: var(--card);
+    --waline-bg-color-light: var(--muted);
+    --waline-border-color: var(--border);
+    --waline-font-color: var(--foreground);
+    --waline-color: var(--muted-foreground);
+    --waline-disable-bg-color: var(--muted);
+    --waline-disable-color: var(--muted-foreground);
+  }
+
+  /* 暗色模式补齐 Waline 的 dark 主题变量 */
+  html.dark .comments-rift {
+    --waline-bg-color-light: oklch(0.20 0.02 270);
+  }
+
+  /* Waline：输入框圆角与站点卡片一致 */
+  .comments-rift .wl-header .wl-input,
+  .comments-rift .wl-editor {
+    border-radius: var(--radius);
+  }
+
+  /* Twikoo —— 对齐输入框与按钮圆角、边框，使其与站点控件一致 */
+  .comments-rift .tk-input,
+  .comments-rift .tk-textarea {
+    border-radius: var(--radius);
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--foreground);
+  }
+
+  .comments-rift .tk-input:focus {
+    border-color: var(--accent);
+  }
+
+  .comments-rift .tk-btn {
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .comments-rift .tk-submit .tk-btn:hover {
+    opacity: 0.85;
+  }
+
+  .comments-rift .comments-container {
+    min-height: 2rem;
   }
 </style>

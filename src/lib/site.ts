@@ -64,13 +64,47 @@ export interface SiteConfig {
   };
   hitokoto: HitokotoConfig;
   social: SocialLink[];
+  comments: CommentsConfig;
+}
+
+/** 评论系统配置 */
+export interface CommentsConfig {
+  /** 启用的评论服务：waline | twikoo | none */
+  provider: "waline" | "twikoo" | "none";
+  /** Waline 配置（provider 为 waline 时生效） */
+  waline: {
+    /** Waline 服务端地址，如 https://your-waline.vercel.app */
+    serverURL: string;
+  };
+  /** Twikoo 配置（provider 为 twikoo 时生效） */
+  twikoo: {
+    /** Twikoo 环境 ID，腾讯云填 envId，Vercel 部署填地址，如 https://your-twikoo.vercel.app */
+    envId: string;
+  };
 }
 
 let cached: SiteConfig | null = null;
 
+/** 评论系统默认配置（未在 site.yaml 声明时回退使用） */
+const defaultComments: CommentsConfig = {
+  provider: "none",
+  waline: { serverURL: "" },
+  twikoo: { envId: "" },
+};
+
 /** 读取并解析站点配置（带缓存） */
 export function getSiteConfig(): SiteConfig {
   if (cached) return cached;
-  cached = parse(yamlRaw) as SiteConfig;
+  const parsed = parse(yamlRaw) as Partial<SiteConfig>;
+  const merged = {
+    ...parsed,
+    comments: {
+      ...defaultComments,
+      ...parsed.comments,
+      waline: { ...defaultComments.waline, ...parsed.comments?.waline },
+      twikoo: { ...defaultComments.twikoo, ...parsed.comments?.twikoo },
+    },
+  } as SiteConfig;
+  cached = merged;
   return cached;
 }

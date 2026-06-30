@@ -2,18 +2,23 @@
 /**
  * 博客列表页
  *
- * 展示所有已发布的博客文章，按日期降序排列。
+ * 展示所有已发布的博客文章，并提供标签筛选、搜索与分页。
+ * 交互逻辑由 React 岛屿 BlogExplorer 承担；本页在构建期将文章映射为
+ * 可序列化的 PostSummary[] 与标签列表传入。初始状态（无筛选、第 1 页）
+ * 经 SSR 渲染进 HTML，挂载后再读取 URL 参数应用筛选。
  * @route /blog
  */
 
 import Layout from "@/layouts/Layout.astro";
 import BlogNav from "@/components/astro/BlogNav.astro";
-import BlogPostCard from "@/components/astro/BlogPostCard.astro";
-import { getPublishedPosts } from "@/lib/blog";
+import BlogExplorer from "@/components/react/BlogExplorer.tsx";
+import { getPublishedPosts, toSummary, getTagsWithCount } from "@/lib/blog";
 import { getSiteConfig } from "@/lib/site";
 
 const { site } = getSiteConfig();
 const posts = await getPublishedPosts();
+const summaries = posts.map(toSummary);
+const tags = getTagsWithCount(posts);
 ---
 
 <Layout title={`${site.title} · 博客`} description="字里行间的裂隙——技术、设计与生活的记录">
@@ -37,19 +42,9 @@ const posts = await getPublishedPosts();
       <div class="rift-line h-0.5 w-full"></div>
     </div>
 
-    <!-- 文章列表 -->
+    <!-- 文章列表 + 筛选 / 搜索 / 分页 -->
     <div class="mx-auto max-w-2xl px-6 py-12">
-      {posts.length > 0 ? (
-        <div class="flex flex-col gap-5">
-          {posts.map((post, i) => (
-            <BlogPostCard post={post} index={i} />
-          ))}
-        </div>
-      ) : (
-        <p class="py-20 text-center text-sm text-muted-foreground">
-          还没有文章，敬请期待。
-        </p>
-      )}
+      <BlogExplorer posts={summaries} tags={tags} client:load />
     </div>
   </main>
 </Layout>

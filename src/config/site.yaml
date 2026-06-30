@@ -81,3 +81,15 @@ social:
     - name: "Email"
       icon: "Mail"
       href: "mailto:hello@example.com"
+
+# 评论系统（文章详情页底部，与博客列表的筛选/搜索/分页配合使用）
+# 两个服务均已部署，按需填入地址后切换 provider 即可启用。
+comments:
+    # 启用的评论服务：waline | twikoo | none
+    provider: "twikoo"
+    # Waline：填入服务端地址（不含末尾斜杠）
+    waline:
+        serverURL: "https://waline.7s.nz"
+    # Twikoo：腾讯云环境填 envId，Vercel 部署填地址
+    twikoo:
+        envId: "https://twikoo.dmsoul.com"

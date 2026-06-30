@@ -12,6 +12,65 @@ import type { CollectionEntry } from "astro:content";
 export type BlogPost = CollectionEntry<"blog">;
 
 /**
+ * 文章摘要 —— 序列化后的纯数据形式，可安全传入 React 客户端组件。
+ *
+ * React 客户端组件不能直接 import `@/lib/blog`（后者依赖 `astro:content`，
+ * 仅在构建期可用），因此列表页在构建期将每篇文章映射为本类型后以 props 传入。
+ */
+export interface PostSummary {
+  /** 文章 URL slug，即文件名（不含扩展名） */
+  id: string;
+  title: string;
+  description: string;
+  /** 发布时间的 ISO 字符串 */
+  pubDate: string;
+  tags: string[];
+  /** 阅读分钟数 */
+  minutes: number;
+}
+
+/**
+ * 将一篇博客文章映射为可序列化的摘要对象。
+ * @param post - 原始文章条目
+ */
+export function toSummary(post: BlogPost): PostSummary {
+  return {
+    id: post.id,
+    title: post.data.title,
+    description: post.data.description,
+    pubDate: post.data.pubDate.toISOString(),
+    tags: post.data.tags,
+    minutes: readingTime(post.body ?? ""),
+  };
+}
+
+/**
+ * 标签 + 文章数量，按数量降序、名称升序排列。
+ */
+export interface TagCount {
+  tag: string;
+  count: number;
+}
+
+/**
+ * 从文章列表中聚合所有标签及其出现次数。
+ * @param posts - 已发布的文章列表
+ */
+export function getTagsWithCount(posts: BlogPost[]): TagCount[] {
+  const map = new Map<string, number>();
+  for (const post of posts) {
+    for (const tag of post.data.tags) {
+      map.set(tag, (map.get(tag) ?? 0) + 1);
+    }
+  }
+  return [...map.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort(
+      (a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "zh-Hans-CN"),
+    );
+}
+
+/**
  * 估算 Markdown 正文的阅读时间（分钟）。
  *
  * 中文字符（CJK）按 ~300 字/分钟，拉丁单词按 ~200 词/分钟分别估算后求和。

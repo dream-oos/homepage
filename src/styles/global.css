@@ -199,6 +199,25 @@
   }
 }
 
+/* ===== 阅读导航（TOC）活动项裂隙条 =====
+   复用站点 conic 裂隙签名，让「当前章节」标记成为导航中的一道裂隙，
+   与头像光环、分隔线的视觉语言保持一致。 */
+.toc-rift-bar {
+  background: conic-gradient(
+    from var(--rift-angle, 0deg),
+    var(--primary),
+    var(--accent),
+    var(--primary)
+  );
+  animation: rift-spin 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toc-rift-bar {
+    animation: none;
+  }
+}
+
 /* 搜索框：移除浏览器原生的清除按钮，改用站点自定义的 × 控件，避免重复 */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration {

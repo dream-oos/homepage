@@ -9,6 +9,8 @@
 import Layout from "@/layouts/Layout.astro";
 import BlogNav from "@/components/astro/BlogNav.astro";
 import Comments from "@/components/react/Comments.tsx";
+import CodeBlockEnhancer from "@/components/react/CodeBlockEnhancer.tsx";
+import ReadingNav from "@/components/react/ReadingNav.tsx";
 import { getPublishedPosts, formatDate, readingTime } from "@/lib/blog";
 import { getSiteConfig } from "@/lib/site";
 import { render } from "astro:content";
@@ -23,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: BlogPost };
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const minutes = readingTime(post.body ?? "");
 const { comments } = getSiteConfig();
 ---
@@ -72,6 +74,9 @@ const { comments } = getSiteConfig();
         <Content />
       </div>
 
+      <!-- 代码块增强：复制按钮 + 长代码折叠 -->
+      <CodeBlockEnhancer client:load />
+
       <!-- 返回链接 -->
       <div class="mt-16 border-t border-border/40 pt-8">
         <a
@@ -87,6 +92,9 @@ const { comments } = getSiteConfig();
       <Comments config={comments} client:visible />
     </article>
   </main>
+
+  <!-- 阅读导航：右下角悬浮目录 + 回到顶部 -->
+  <ReadingNav headings={headings} client:load />
 </Layout>
 
 <style>
@@ -115,6 +123,11 @@ const { comments } = getSiteConfig();
 
 <style is:global>
   /* ===== Prose styling for blog content ===== */
+  /* 锚点跳转预留顶栏高度，避免标题被固定导航栏遮挡 */
+  .prose-rift :is(h2, h3, h4) {
+    scroll-margin-top: 4.5rem;
+  }
+
   .prose-rift h2 {
     font-family: var(--font-heading);
     font-size: 1.5rem;
@@ -217,6 +230,69 @@ const { comments } = getSiteConfig();
     padding: 0;
     border-radius: 0;
     font-size: inherit;
+  }
+
+  /* ===== 代码块增强（复制 + 折叠） ===== */
+  .code-block-wrapper {
+    position: relative;
+    margin: 1.5rem 0;
+  }
+
+  /* 包装后 pre 自身不再需要外边距，由 wrapper 统一控制 */
+  .code-block-wrapper > pre {
+    margin: 0;
+  }
+
+  /* 可折叠块：为底部折叠按钮预留空间，避免遮挡最后一行代码 */
+  .code-block-wrapper.is-collapsible > pre {
+    padding-bottom: 3rem;
+  }
+
+  /* 折叠态：限制可见高度（仅纵向裁剪，横向仍可滚动） */
+  .code-block-wrapper.is-collapsible.is-collapsed > pre {
+    max-height: 300px;
+    overflow-y: hidden;
+  }
+
+  /* 工具栏（复制）按钮默认半透明，悬浮容器时显现 */
+  .code-block-toolbar button {
+    opacity: 0;
+    transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+  }
+
+  .code-block-wrapper:hover .code-block-toolbar button,
+  .code-block-wrapper:focus-within .code-block-toolbar button {
+    opacity: 1;
+  }
+
+  /* 折叠态底部半透明遮罩 —— 不完全遮死，隐约透出下方代码 */
+  .code-block-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 7.5rem;
+    border-radius: 0 0 0.75rem 0.75rem;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in oklch, var(--card, oklch(0.17 0.02 270)) 68%, transparent) 55%,
+      color-mix(in oklch, var(--card, oklch(0.17 0.02 270)) 86%, transparent)
+    );
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .code-block-wrapper.is-collapsed .code-block-fade {
+    opacity: 1;
+  }
+
+  /* 展开时隐藏遮罩 */
+  .code-block-wrapper:not(.is-collapsed) .code-block-fade {
+    display: none;
   }
 
   .prose-rift hr {

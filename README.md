@@ -10,6 +10,8 @@
   - **实时搜索** — 按标题 / 描述 / 标签全文匹配，`/` 键聚焦、`Esc` 清空
   - **分页** — 文章数超过单页时自动分页（默认每页 6 篇），状态写入 URL（`?page=...`）
   - **评论系统** — 文章详情页底部，兼容 **Waline** 与 **Twikoo** 两种已部署服务，滚动进入视口后懒加载
+  - **代码块增强** — 文章正文代码块支持一键复制；超长块（>14 行）默认折叠，底部以半透明遮罩隐约透出代码，附「展开 / 折叠」按钮切换
+  - **阅读导航** — 文章详情页右下角悬浮控件：展开即目录（TOC），跟随滚动高亮当前章节；附阅读进度百分比与回到顶部
 - **视觉系统** — 统一的全局背景图与遮罩（根据浅色/深色主题智能调整）、Space Grotesk 标题、Geist Variable 正文、响应式 CRT 扫描线
 - **主题切换** — 原生支持浅色（Ivory & Crimson）与深色（Void & Teal）主题无缝切换，并持久化本地存储
 - **响应式 & 无障碍** — 移动端适配，尊重 `prefers-reduced-motion`
@@ -30,6 +32,8 @@
 │   │       ├── BlogExplorer.tsx   # 博客列表交互（筛选 / 搜索 / 分页）
 │   │       ├── PostCard.tsx       # 列表卡片（React 版）
 │   │       ├── Comments.tsx       # 评论系统（Waline / Twikoo 懒加载）
+│   │       ├── CodeBlockEnhancer.tsx  # 代码块复制 + 长块折叠
+│   │       ├── ReadingNav.tsx     # 文章阅读导航（TOC + 回到顶部）
 │   │       ├── InfoCard.tsx
 │   │       ├── SocialLinks.tsx
 │   │       └── Typewriter.tsx
@@ -94,7 +98,9 @@ draft: false                    # 可选，true 时不会发布
 | `src/components/react/BlogExplorer.tsx` | 列表交互核心：标签筛选 + 搜索 + 分页 + URL 同步 + 空状态 |
 | `src/components/react/PostCard.tsx` | 列表卡片（React 版，样式与 `BlogPostCard.astro` 对齐） |
 | `src/components/react/Comments.tsx` | 评论系统，按配置懒加载 Waline 或 Twikoo |
-| `src/pages/blog/[...slug].astro` | 文章详情页，正文样式位于 `.prose-rift`，底部嵌入评论 |
+| `src/components/react/CodeBlockEnhancer.tsx` | 代码块增强：复制按钮 + 长块折叠（半透明遮罩 + 展开/折叠切换） |
+| `src/components/react/ReadingNav.tsx` | 文章阅读导航：右下角悬浮目录（TOC）+ 当前章节高亮 + 回到顶部 |
+| `src/pages/blog/[...slug].astro` | 文章详情页，正文样式位于 `.prose-rift`，嵌入代码块增强、阅读导航与评论 |
 | `src/components/astro/BlogNav.astro` | 博客页顶部导航栏，集成了主题切换按钮 |
 | `src/components/astro/ThemeToggle.astro` | 主题切换组件，支持 Sun/Moon 旋转动画与状态同步 |
 

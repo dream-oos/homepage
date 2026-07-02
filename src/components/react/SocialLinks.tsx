@@ -22,7 +22,7 @@ export default function SocialLinks({ links }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={link.name}
-            className="flex h-10 w-10 items-center justify-center rounded-lg border border-border/40 bg-card/40 text-muted-foreground transition-all duration-300 hover:border-accent/50 hover:text-accent hover:bg-accent/10 hover:-translate-y-0.5"
+            className="border-border/40 bg-card/40 text-muted-foreground hover:border-accent/50 hover:text-accent hover:bg-accent/10 flex h-10 w-10 items-center justify-center rounded-lg border transition-all duration-300 hover:-translate-y-0.5"
           >
             <Icon size={17} />
           </a>

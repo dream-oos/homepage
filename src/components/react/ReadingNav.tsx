@@ -136,25 +136,25 @@ export default function ReadingNav({ headings }: Props) {
     "inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/80 text-muted-foreground shadow-lg shadow-black/20 backdrop-blur-md transition-all hover:text-foreground hover:border-border focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:size-11";
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2 sm:bottom-6 sm:right-6">
+    <div className="pointer-events-none fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 sm:right-6 sm:bottom-6">
       {/* 目录面板 */}
       {open && items.length > 0 && (
         <nav
           aria-label="文章目录"
-          className="pointer-events-auto w-[min(80vw,17rem)] overflow-hidden rounded-xl border border-border/60 bg-card/90 shadow-xl shadow-black/30 backdrop-blur-xl"
+          className="border-border/60 bg-card/90 pointer-events-auto w-[min(80vw,17rem)] overflow-hidden rounded-xl border shadow-xl shadow-black/30 backdrop-blur-xl"
         >
           {/* 顶部阅读进度条（克制：纯主色，不参与裂隙动画） */}
           <div
-            className="h-[2px] bg-primary/80 transition-[width] duration-150 ease-out"
+            className="bg-primary/80 h-[2px] transition-[width] duration-150 ease-out"
             style={{ width: `${progress}%` }}
             aria-hidden="true"
           />
           {/* 头部：标题 + 百分比 */}
           <div className="flex h-9 items-center justify-between px-3">
-            <span className="font-heading text-xs font-medium tracking-wide text-foreground">
+            <span className="font-heading text-foreground text-xs font-medium tracking-wide">
               目录
             </span>
-            <span className="text-[10px] tabular-nums text-muted-foreground">
+            <span className="text-muted-foreground text-[10px] tabular-nums">
               {Math.round(progress)}%
             </span>
           </div>
@@ -181,7 +181,7 @@ export default function ReadingNav({ headings }: Props) {
                   >
                     {active && (
                       <span
-                        className="toc-rift-bar absolute left-0 top-1 bottom-1 w-[2px] rounded-full"
+                        className="toc-rift-bar absolute top-1 bottom-1 left-0 w-[2px] rounded-full"
                         aria-hidden="true"
                       />
                     )}
@@ -204,7 +204,11 @@ export default function ReadingNav({ headings }: Props) {
             aria-expanded={open}
             className={roundBtn}
           >
-            {open ? <X className="size-[18px]" /> : <List className="size-[18px]" />}
+            {open ? (
+              <X className="size-[18px]" />
+            ) : (
+              <List className="size-[18px]" />
+            )}
           </button>
         )}
 

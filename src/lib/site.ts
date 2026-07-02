@@ -36,7 +36,10 @@ export interface AvatarConfig {
 /** 背景配置 */
 export interface BackgroundConfig {
   src: string;
-  overlay: number;
+  /** 浅色模式遮罩透明度 0-1，数值越大背景越暗 */
+  overlayLight: number;
+  /** 暗色模式遮罩透明度 0-1，数值越大背景越暗 */
+  overlayDark: number;
 }
 
 /** 一言配置 */
@@ -92,12 +95,36 @@ const defaultComments: CommentsConfig = {
   twikoo: { envId: "" },
 };
 
+/** 背景遮罩默认值（未在 site.yaml 声明时回退使用） */
+const defaultBackground: Pick<
+  BackgroundConfig,
+  "overlayLight" | "overlayDark"
+> = {
+  overlayLight: 0.82,
+  overlayDark: 0.72,
+};
+
 /** 读取并解析站点配置（带缓存） */
 export function getSiteConfig(): SiteConfig {
   if (cached) return cached;
   const parsed = parse(yamlRaw) as Partial<SiteConfig>;
+  // 兼容旧字段 overlay（已废弃，保留平滑迁移）
+  const legacyOverlay = (parsed.background as { overlay?: number } | undefined)
+    ?.overlay;
   const merged = {
     ...parsed,
+    background: {
+      ...defaultBackground,
+      ...parsed.background,
+      overlayLight:
+        parsed.background?.overlayLight ??
+        legacyOverlay ??
+        defaultBackground.overlayLight,
+      overlayDark:
+        parsed.background?.overlayDark ??
+        legacyOverlay ??
+        defaultBackground.overlayDark,
+    },
     comments: {
       ...defaultComments,
       ...parsed.comments,

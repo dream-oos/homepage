@@ -32,7 +32,7 @@ export async function getSaying(): Promise<SayingResponse> {
 }
 
 /** 为不支持 AbortSignal 的 SDK 调用附加超时保护 */
-function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error("uapis /saying 请求超时")), ms);

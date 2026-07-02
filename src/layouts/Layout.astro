@@ -5,15 +5,22 @@ import { getSiteConfig } from "@/lib/site";
 interface Props {
   title?: string;
   description?: string;
+  /** 社交分享用图片（绝对或相对路径），默认用 favicon */
+  image?: string;
 }
 
 const {
   title = "个人中心",
   description = "个人网站中心页面",
+  image = "/favicon.svg",
 } = Astro.props;
 
 const config = getSiteConfig();
 const { background } = config;
+
+// canonical 与 OG 绝对 URL
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const ogImage = new URL(image, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
@@ -24,47 +31,101 @@ const { background } = config;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- 字体已本地化（@fontsource），无需 Google Fonts CDN -->
+
+    <!-- canonical：避免带查询参数的 URL 被视为重复内容 -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- RSS 与 sitemap 可发现性 -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="alternate"
+      type="application/rss+xml"
+      title="Homepage · 博客"
+      href="/rss.xml"
     />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="Homepage" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <title>{title}</title>
+    <style
+      is:inline
+      set:html={`:root{--bg-overlay-light:${background.overlayLight};--bg-overlay-dark:${background.overlayDark}}`}
+    ></style>
     <script is:inline>
       // 避免主题加载闪烁 (FOUC)
       const getThemePreference = () => {
-        if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-          return localStorage.getItem('theme');
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("theme")
+        ) {
+          return localStorage.getItem("theme");
         }
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+        return window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark";
       };
       const theme = getThemePreference();
-      if (theme === 'light') {
-        document.documentElement.classList.remove('dark');
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
       } else {
-        document.documentElement.classList.add('dark');
+        document.documentElement.classList.add("dark");
+      }
+
+      // 背景图加载失败时回退到本地裂隙主题 SVG，保证背景始终可见。
+      // 用 error 事件监听替代内联 onerror，避免 astro check 对内联字符串的误报。
+      const setupBgFallback = () => {
+        const img = document.getElementById("bg-img");
+        if (!img || img.dataset.fallbackBound) return;
+        img.dataset.fallbackBound = "true";
+        img.addEventListener("error", () => {
+          if (img.src.endsWith("/bg-fallback.svg")) return;
+          img.src = "/bg-fallback.svg";
+        });
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", setupBgFallback);
+      } else {
+        setupBgFallback();
       }
     </script>
   </head>
   <body>
     <!-- 全局背景层 -->
-    <div class="fixed inset-0 -z-10 overflow-hidden select-none pointer-events-none">
+    <div
+      class="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none"
+    >
       <img
+        id="bg-img"
         src={background.src}
         alt=""
         aria-hidden="true"
         class="h-full w-full object-cover transition-opacity duration-500"
         loading="eager"
       />
-      <!-- 背景遮罩 (随主题色切换底色) -->
+      <!-- 背景遮罩 (随主题色切换底色，浓度由 site.yaml 的 overlayLight/overlayDark 控制) -->
       <div
-        class="background-overlay absolute inset-0 bg-background transition-colors duration-300"
-        style={`opacity: ${background.overlay}`}
+        class="background-overlay bg-background absolute inset-0 transition-colors duration-300"
       >
       </div>
       <!-- 扫描线纹理 -->
-      <div class="scan-lines absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+      <div
+        class="scan-lines pointer-events-none absolute inset-0"
+        aria-hidden="true"
+      >
+      </div>
     </div>
 
     <slot />
@@ -80,14 +141,14 @@ const { background } = config;
 
   /* 浅色模式：高遮罩浓度保证深色文字可读 */
   html:not(.dark) .background-overlay {
-    opacity: 0.82 !important;
+    opacity: var(--bg-overlay-light, 0.82);
   }
 
   /* 暗色模式：虚空压在亮背景图上，提浓遮罩并轻虚化，
      既压住亮度峰值让灰字可读，又保留背景图的色温氛围 */
   html.dark .background-overlay {
-    opacity: 0.72 !important;
+    opacity: var(--bg-overlay-dark, 0.72);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
-  </style>
+</style>

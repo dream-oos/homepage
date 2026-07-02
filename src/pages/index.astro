@@ -17,52 +17,65 @@ const { avatar, info, hitokoto, social, site } = config;
   </div>
 
   <!-- 主内容 -->
-  <main class="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 py-20">
+  <main
+    class="relative mx-auto flex min-h-screen max-w-4xl flex-col items-center justify-center px-6 py-20"
+  >
     <!-- 三栏布局：左信息 · 中头像 · 右信息 -->
     <div
       class="grid w-full grid-cols-1 items-center gap-10 md:grid-cols-[1fr_auto_1fr] md:gap-12"
     >
       <!-- 左侧词条 -->
       <ul class="order-2 flex flex-col gap-3 md:order-1 md:items-end">
-        {info.left.map((item, i) => (
-          <InfoCard item={item} side="left" index={i} client:load />
-        ))}
+        {
+          info.left.map((item, i) => (
+            <InfoCard item={item} side="left" index={i} client:load />
+          ))
+        }
       </ul>
 
       <!-- 中心头像 -->
       <div class="order-1 flex flex-col items-center gap-6 md:order-2">
         <div class="rift-ring relative">
           <!-- 光晕 -->
-          <div class="rift-glow absolute -inset-3 rounded-full opacity-40 blur-xl"></div>
+          <div
+            class="rift-glow absolute -inset-3 rounded-full opacity-40 blur-xl"
+          >
+          </div>
           <!-- 旋转边框 -->
           <div class="rift-border absolute -inset-[3px] rounded-full"></div>
           <img
             src={avatar.src}
             alt={avatar.alt}
-            class="relative h-36 w-36 rounded-full border-[3px] border-background object-cover shadow-2xl animate-in fade-in zoom-in-105 duration-700 fill-mode-both"
+            class="border-background animate-in fade-in zoom-in-105 fill-mode-both relative h-36 w-36 rounded-full border-[3px] object-cover shadow-2xl duration-700"
             loading="eager"
           />
         </div>
-        <div class="flex flex-col items-center gap-1.5 animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both [animation-delay:300ms]">
-          <h1 class="font-heading text-2xl font-semibold tracking-tight text-foreground">
+        <div
+          class="animate-in fade-in slide-in-from-bottom-4 fill-mode-both flex flex-col items-center gap-1.5 duration-700 [animation-delay:300ms]"
+        >
+          <h1
+            class="font-heading text-foreground text-2xl font-semibold tracking-tight"
+          >
             {avatar.name}
           </h1>
-          <p class="text-sm text-muted-foreground">{avatar.tagline}</p>
+          <p class="text-muted-foreground text-sm">{avatar.tagline}</p>
         </div>
       </div>
 
       <!-- 右侧词条 -->
       <ul class="order-3 flex flex-col gap-3 md:items-start">
-        {info.right.map((item, i) => (
-          <InfoCard item={item} side="right" index={i} client:load />
-        ))}
+        {
+          info.right.map((item, i) => (
+            <InfoCard item={item} side="right" index={i} client:load />
+          ))
+        }
       </ul>
     </div>
 
     <!-- 一言打字效果 -->
     {
       hitokoto.enabled && (
-        <div class="mt-14 flex min-h-[2rem] w-full max-w-xl items-center justify-center px-4 text-center animate-in fade-in slide-in-from-bottom-3 duration-700 fill-mode-both [animation-delay:700ms]">
+        <div class="animate-in fade-in slide-in-from-bottom-3 fill-mode-both mt-14 flex min-h-[2rem] w-full max-w-xl items-center justify-center px-4 text-center duration-700 [animation-delay:700ms]">
           <Typewriter
             placeholder={hitokoto.placeholder}
             fallback={hitokoto.fallback}
@@ -79,7 +92,7 @@ const { avatar, info, hitokoto, social, site } = config;
     <!-- 社交链接 -->
     {
       social.length > 0 && (
-        <div class="mt-10 animate-in fade-in slide-in-from-bottom-3 duration-700 fill-mode-both [animation-delay:900ms]">
+        <div class="animate-in fade-in slide-in-from-bottom-3 fill-mode-both mt-10 duration-700 [animation-delay:900ms]">
           <SocialLinks links={social} client:load />
         </div>
       )
@@ -88,7 +101,7 @@ const { avatar, info, hitokoto, social, site } = config;
     <!-- 博客链接 -->
     <a
       href="/blog"
-      class="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-muted-foreground transition-colors hover:text-accent animate-in fade-in slide-in-from-bottom-3 duration-700 fill-mode-both [animation-delay:1100ms]"
+      class="text-muted-foreground hover:text-accent animate-in fade-in slide-in-from-bottom-3 fill-mode-both mt-6 inline-flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase transition-colors duration-700 [animation-delay:1100ms]"
     >
       博客 / Blog
     </a>
@@ -131,6 +144,9 @@ const { avatar, info, hitokoto, social, site } = config;
     animation: rift-spin 8s linear infinite;
   }
 
+  /* rift-spin keyframe 的真源在 global.css（全局版本，供 .rift-line / .rift-underline
+     / .toc-rift-bar 等使用）。此处因 Astro scoped <style> 会改写 keyframe 名以隔离，
+     需保留一份本地定义供 .rift-glow / .rift-border 引用，两者语义一致。 */
   @keyframes rift-spin {
     to {
       --rift-angle: 360deg;

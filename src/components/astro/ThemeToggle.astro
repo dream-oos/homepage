@@ -7,12 +7,12 @@
 ---
 
 <button
-  class="theme-toggle-btn group relative flex h-9 w-9 items-center justify-center rounded-lg border border-border/40 bg-background/50 text-muted-foreground backdrop-blur-sm transition-all hover:bg-muted hover:text-foreground focus:outline-none focus:ring-1 focus:ring-accent"
+  class="theme-toggle-btn group border-border/40 bg-background/50 text-muted-foreground hover:bg-muted hover:text-foreground focus:ring-accent relative flex h-9 w-9 items-center justify-center rounded-lg border backdrop-blur-sm transition-all focus:ring-1 focus:outline-none"
   aria-label="切换主题"
 >
   <!-- Sun Icon (shown in dark mode) -->
   <svg
-    class="theme-toggle-light-icon h-4 w-4 transition-all duration-300 rotate-90 scale-0 dark:rotate-0 dark:scale-100 absolute"
+    class="theme-toggle-light-icon absolute h-4 w-4 scale-0 rotate-90 transition-all duration-300 dark:scale-100 dark:rotate-0"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -22,12 +22,14 @@
     stroke-linejoin="round"
   >
     <circle cx="12" cy="12" r="4"></circle>
-    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+    <path
+      d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+    ></path>
   </svg>
-  
+
   <!-- Moon Icon (shown in light mode) -->
   <svg
-    class="theme-toggle-dark-icon h-4 w-4 transition-all duration-300 rotate-0 scale-100 dark:-rotate-90 dark:scale-0 absolute"
+    class="theme-toggle-dark-icon absolute h-4 w-4 scale-100 rotate-0 transition-all duration-300 dark:scale-0 dark:-rotate-90"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -43,33 +45,62 @@
 <script is:inline>
   // 绑定所有具有 .theme-toggle-btn 类的按钮
   const initThemeToggles = () => {
-    const toggleBtns = document.querySelectorAll('.theme-toggle-btn');
-    
-    toggleBtns.forEach(btn => {
+    const toggleBtns = document.querySelectorAll(".theme-toggle-btn");
+
+    // 同步按钮的可访问性状态：aria-pressed + 语义化 aria-label
+    const syncA11y = (btn) => {
+      const isDark = document.documentElement.classList.contains("dark");
+      btn.setAttribute("aria-pressed", String(isDark));
+      btn.setAttribute(
+        "aria-label",
+        isDark ? "切换到浅色模式（当前深色）" : "切换到深色模式（当前浅色）",
+      );
+    };
+
+    toggleBtns.forEach((btn) => {
       // 避免重复绑定
       if (btn.dataset.themeBound) return;
-      btn.dataset.themeBound = 'true';
+      btn.dataset.themeBound = "true";
 
-      btn.addEventListener('click', () => {
-        const isDark = document.documentElement.classList.contains('dark');
+      syncA11y(btn);
+
+      btn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.contains("dark");
         if (isDark) {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
+          document.documentElement.classList.remove("dark");
+          localStorage.setItem("theme", "light");
         } else {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
+          document.documentElement.classList.add("dark");
+          localStorage.setItem("theme", "dark");
         }
-        
+
+        syncA11y(btn);
+
         // 触发自定义事件
-        window.dispatchEvent(new Event('theme-change'));
+        window.dispatchEvent(new Event("theme-change"));
       });
     });
+
+    // 主题被其他途径切换时（如防闪烁脚本初次设置），同步所有按钮状态
+    window.removeEventListener("theme-change", syncAllA11y);
+    window.addEventListener("theme-change", syncAllA11y);
   };
+
+  function syncAllA11y() {
+    document.querySelectorAll(".theme-toggle-btn").forEach((btn) => {
+      const isDark = document.documentElement.classList.contains("dark");
+      btn.setAttribute("aria-pressed", String(isDark));
+      btn.setAttribute(
+        "aria-label",
+        isDark ? "切换到浅色模式（当前深色）" : "切换到深色模式（当前浅色）",
+      );
+    });
+  }
 
   // 立即初始化
   initThemeToggles();
-  
+
   // 监听可能的 DOM 变更（如 Astro 的路由切换，若未来引入）
-  document.addEventListener('astro:page-load', initThemeToggles);
-  document.addEventListener('astro:after-swap', initThemeToggles);
+  document.addEventListener("astro:page-load", initThemeToggles);
+  document.addEventListener("astro:after-swap", initThemeToggles);
 </script>

@@ -155,7 +155,7 @@ export default function BlogExplorer({
       >
         <Search
           size={15}
-          className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 text-muted-foreground/70"
+          className="text-muted-foreground/70 pointer-events-none absolute top-1/2 left-0 -translate-y-1/2"
         />
         <input
           ref={searchRef}
@@ -170,20 +170,20 @@ export default function BlogExplorer({
           }}
           placeholder="搜索标题、标签（支持拼音 sheji / sj）…"
           aria-label="搜索文章"
-          className="w-full border-b border-border/60 bg-transparent pb-2 pl-6 pr-16 text-sm text-foreground placeholder:text-muted-foreground/60 focus:border-accent focus:outline-none"
+          className="border-border/60 text-foreground placeholder:text-muted-foreground/60 focus:border-accent w-full border-b bg-transparent pr-16 pb-2 pl-6 text-sm focus:outline-none"
         />
-        <div className="absolute right-0 top-1/2 flex -translate-y-1/2 items-center gap-2">
+        <div className="absolute top-1/2 right-0 flex -translate-y-1/2 items-center gap-2">
           {query && (
             <button
               type="button"
               onClick={() => onSearch("")}
               aria-label="清除搜索"
-              className="flex h-5 w-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+              className="text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:ring-accent flex h-5 w-5 items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-1"
             >
               <X size={13} />
             </button>
           )}
-          <kbd className="hidden rounded border border-border/50 bg-card/60 px-1.5 py-0.5 font-sans text-[10px] text-muted-foreground/80 sm:inline-block">
+          <kbd className="border-border/50 bg-card/60 text-muted-foreground/80 hidden rounded border px-1.5 py-0.5 font-sans text-[10px] sm:inline-block">
             /
           </kbd>
         </div>
@@ -194,7 +194,7 @@ export default function BlogExplorer({
         <div
           role="group"
           aria-label="按标签筛选"
-          className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border/40 pb-4"
+          className="border-border/40 mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-b pb-4"
         >
           <TagButton
             label="全部"
@@ -215,7 +215,7 @@ export default function BlogExplorer({
       )}
 
       {/* ===== 结果计数 ===== */}
-      <div className="mb-5 flex items-center justify-between text-xs text-muted-foreground">
+      <div className="text-muted-foreground mb-5 flex items-center justify-between text-xs">
         <span>
           {hasFilters
             ? `匹配 ${filtered.length} / ${total} 篇`
@@ -225,7 +225,7 @@ export default function BlogExplorer({
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded text-muted-foreground transition-colors hover:text-accent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="text-muted-foreground hover:text-accent focus-visible:ring-accent rounded transition-colors focus:outline-none focus-visible:ring-1"
           >
             清除筛选
           </button>
@@ -234,18 +234,18 @@ export default function BlogExplorer({
 
       {/* ===== 文章列表 ===== */}
       {total === 0 ? (
-        <p className="py-20 text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground py-20 text-center text-sm">
           还没有文章，敬请期待。
         </p>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-3 py-16 text-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             没有匹配「{query.trim() || tag}」的文章。
           </p>
           <button
             type="button"
             onClick={clearFilters}
-            className="rounded-md border border-border/60 bg-card/50 px-3 py-1.5 text-xs text-foreground transition-colors hover:border-accent/60 hover:text-accent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="border-border/60 bg-card/50 text-foreground hover:border-accent/60 hover:text-accent focus-visible:ring-accent rounded-md border px-3 py-1.5 text-xs transition-colors focus:outline-none focus-visible:ring-1"
           >
             清除筛选，查看全部
           </button>
@@ -282,7 +282,7 @@ export default function BlogExplorer({
             p === "ellipsis" ? (
               <span
                 key={`e-${i}`}
-                className="px-1.5 text-muted-foreground/60"
+                className="text-muted-foreground/60 px-1.5"
                 aria-hidden="true"
               >
                 …
@@ -332,7 +332,7 @@ function TagButton({
       onClick={onClick}
       aria-pressed={active}
       className={
-        "relative text-xs uppercase tracking-[0.1em] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded " +
+        "focus-visible:ring-accent relative rounded text-xs tracking-[0.1em] uppercase transition-colors focus:outline-none focus-visible:ring-1 " +
         (active
           ? "text-primary"
           : "text-muted-foreground hover:text-foreground")
@@ -340,7 +340,7 @@ function TagButton({
     >
       <span>
         {label}
-        <span className="ml-1 font-sans normal-case tracking-normal opacity-60">
+        <span className="ml-1 font-sans tracking-normal normal-case opacity-60">
           {count}
         </span>
       </span>
@@ -370,7 +370,7 @@ function PageButton({
       disabled={disabled}
       onClick={onClick}
       className={
-        "relative inline-flex h-8 min-w-8 items-center justify-center gap-0.5 rounded-md px-2 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-accent disabled:pointer-events-none disabled:opacity-30 " +
+        "focus-visible:ring-accent relative inline-flex h-8 min-w-8 items-center justify-center gap-0.5 rounded-md px-2 transition-colors focus:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-30 " +
         (active
           ? "text-primary"
           : "text-muted-foreground hover:bg-muted hover:text-foreground")

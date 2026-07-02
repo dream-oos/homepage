@@ -12,11 +12,11 @@ draft: false
 
 由此衍生出三组核心色彩：
 
-| 角色 | 色值 | 含义 |
-|------|------|------|
-| **Void（虚空）** | `oklch(0.13 0.02 270)` | 深蓝黑背景，无尽深邃 |
-| **Webline（网线红）** | `oklch(0.58 0.22 18)` | 裂隙的红色光芒，主色调 |
-| **Dimension（维度）** | `oklch(0.72 0.12 180)` | 青色点缀，交互反馈 |
+| 角色                  | 色值                   | 含义                   |
+| --------------------- | ---------------------- | ---------------------- |
+| **Void（虚空）**      | `oklch(0.13 0.02 270)` | 深蓝黑背景，无尽深邃   |
+| **Webline（网线红）** | `oklch(0.58 0.22 18)`  | 裂隙的红色光芒，主色调 |
+| **Dimension（维度）** | `oklch(0.72 0.12 180)` | 青色点缀，交互反馈     |
 
 ## 裂隙光环的实现
 
@@ -40,7 +40,9 @@ draft: false
 }
 
 @keyframes rift-spin {
-  to { --rift-angle: 360deg; }
+  to {
+    --rift-angle: 360deg;
+  }
 }
 ```
 
@@ -71,8 +73,12 @@ draft: false
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  .rift-border { animation: none; }
-  .scan-lines { display: none; }
+  .rift-border {
+    animation: none;
+  }
+  .scan-lines {
+    display: none;
+  }
 }
 ```
 

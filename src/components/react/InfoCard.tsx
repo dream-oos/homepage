@@ -25,14 +25,14 @@ export default function InfoCard({ item, side, index }: Props) {
 
   const inner = (
     <div className="flex items-center gap-3">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-accent/15 group-hover:text-accent">
+      <span className="bg-primary/10 text-primary group-hover:bg-accent/15 group-hover:text-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors duration-300">
         <Icon size={16} />
       </span>
       <span className="flex flex-col gap-0.5">
-        <span className="text-[10px] font-medium uppercase tracking-[0.15em] text-muted-foreground">
+        <span className="text-muted-foreground text-[10px] font-medium tracking-[0.15em] uppercase">
           {item.label}
         </span>
-        <span className="text-sm font-medium text-foreground/85 transition-colors duration-300 group-hover:text-foreground">
+        <span className="text-foreground/85 group-hover:text-foreground text-sm font-medium transition-colors duration-300">
           {item.value}
         </span>
       </span>
@@ -45,10 +45,7 @@ export default function InfoCard({ item, side, index }: Props) {
     animationClass;
 
   return (
-    <li
-      className={cls}
-      style={{ animationDelay: `${delay}ms` }}
-    >
+    <li className={cls} style={{ animationDelay: `${delay}ms` }}>
       {item.href ? (
         <a
           href={item.href}

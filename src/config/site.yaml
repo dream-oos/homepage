@@ -5,91 +5,93 @@
 
 # 站点元信息
 site:
-    # 浏览器标签页标题
-    title: "个人中心"
-    # 站点副标题（可选）
-    subtitle: "Personal Hub"
+  # 浏览器标签页标题
+  title: "个人中心"
+  # 站点副标题（可选）
+  subtitle: "Personal Hub"
 
 # 头像
 avatar:
-    # 图片文件，放在 /public 目录下，或填写完整 URL
-    src: "/avatar.webp"
-    alt: "头像"
-    # 头像下方的名字
-    name: "Your Name"
-    # 名字下方的一句话签名
-    tagline: "一个正在探索世界的开发者"
+  # 图片文件，放在 /public 目录下，或填写完整 URL
+  src: "/avatar.webp"
+  alt: "头像"
+  # 头像下方的名字
+  name: "Your Name"
+  # 名字下方的一句话签名
+  tagline: "一个正在探索世界的开发者"
 
 # 背景图
 background:
-    # 图片文件，放在 /public 目录下，或填写完整 URL
-    src: "https://raw.7s.nz/random?type=img&dir=images/carton&orientation=auto"
-    # 遮罩透明度 0-1，数值越大背景越暗
-    overlay: 0.55
+  # 图片文件，放在 /public 目录下，或填写完整 URL
+  src: "https://raw.7s.nz/random?type=img&dir=images/carton&orientation=auto"
+  # 浅色模式遮罩透明度 0-1，数值越大背景越暗（保证深色文字可读）
+  overlayLight: 0.82
+  # 暗色模式遮罩透明度 0-1，数值越大背景越暗
+  overlayDark: 0.72
 
 # 信息词条 · 左右两侧
 # icon 使用 lucide 图标名（见 https://lucide.dev/icons）
 info:
-    # 左侧词条
-    left:
-        - label: "职业"
-          value: "全栈工程师"
-          icon: "Code2"
-        - label: "所在地"
-          value: "中国 · 商丘"
-          icon: "MapPin"
-        - label: "邮箱"
-          value: "3448104699@qq.com"
-          icon: "Mail"
-          # 可选：为该词条添加链接
-          href: "mailto:3448104699@qq.com"
-    # 右侧词条
-    right:
-        - label: "GitHub"
-          value: "@dream-oos"
-          icon: "Github"
-          href: "https://github.com/dream-oos"
-        - label: "技术栈"
-          value: "TypeScript · Astro · React"
-          icon: "Layers"
-        - label: "状态"
-          value: "正在寻找新机会"
-          icon: "Sparkles"
+  # 左侧词条
+  left:
+    - label: "职业"
+      value: "全栈工程师"
+      icon: "Code2"
+    - label: "所在地"
+      value: "中国 · 商丘"
+      icon: "MapPin"
+    - label: "邮箱"
+      value: "3448104699@qq.com"
+      icon: "Mail"
+      # 可选：为该词条添加链接
+      href: "mailto:3448104699@qq.com"
+  # 右侧词条
+  right:
+    - label: "GitHub"
+      value: "@dream-oos"
+      icon: "Github"
+      href: "https://github.com/dream-oos"
+    - label: "技术栈"
+      value: "TypeScript · Astro · React"
+      icon: "Layers"
+    - label: "状态"
+      value: "正在寻找新机会"
+      icon: "Sparkles"
 
 # 一言（Hitokoto）打字效果
 hitokoto:
-    # 是否启用打字效果
-    enabled: true
-    # 占位文字，API 返回前展示
-    placeholder: "加载中…"
-    # 一言请求失败时的兜底文字
-    fallback: "世界那么大，我想去看看。"
-    # 打字速度（每个字符的毫秒数）
-    typeSpeed: 80
-    # 删除速度（每个字符的毫秒数）
-    deleteSpeed: 40
-    # 一条话打字完成后停留时长（毫秒）
-    holdAfterTyped: 2500
-    # 删除完成后停留时长（毫秒）
-    holdAfterDeleted: 500
+  # 是否启用打字效果
+  enabled: true
+  # 占位文字，API 返回前展示
+  placeholder: "加载中…"
+  # 一言请求失败时的兜底文字
+  fallback: "世界那么大，我想去看看。"
+  # 打字速度（每个字符的毫秒数）
+  typeSpeed: 80
+  # 删除速度（每个字符的毫秒数）
+  deleteSpeed: 40
+  # 一条话打字完成后停留时长（毫秒）
+  holdAfterTyped: 2500
+  # 删除完成后停留时长（毫秒）
+  holdAfterDeleted: 500
 
 # 社交链接（页脚）
 social:
-    - name: "GitHub"
-      icon: "Github"
-      href: "https://github.com/yourname"
-    - name: "Email"
-      icon: "Mail"
-      href: "mailto:hello@example.com"
+  - name: "GitHub"
+    icon: "Github"
+    href: "https://github.com/dream-oos"
+  - name: "Email"
+    icon: "Mail"
+    href: "mailto:3448104699@qq.com"
 
 # 评论系统（文章详情页底部，与博客列表的筛选/搜索/分页配合使用）
 # 两个服务均已部署，按需填入地址后切换 provider 即可启用。
 comments:
-    # 启用的评论服务：waline | twikoo | none
-    provider: "twikoo"
-    # Waline：填入服务端地址（不含末尾斜杠）
-    waline:
-        serverURL: "https://waline.7s.nz"
-    # Twikoo：腾讯云环境填 envId，Vercel 部署填地址
-    twikoo:
-        envId: "https://twikoo.dmsoul.com"
+  # 启用的评论服务：waline | twikoo | none
+  provider: "twikoo"
+  # Waline：填入服务端地址（不含末尾斜杠）
+  waline:
+    serverURL: "https://waline.7s.nz"
+  # Twikoo：腾讯云环境填 envId，Vercel 部署填地址
+  twikoo:
+    envId: "https://twikoo.dmsoul.com"

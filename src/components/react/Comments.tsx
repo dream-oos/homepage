@@ -172,10 +172,10 @@ export default function Comments({ config }: Props) {
   if (config.provider === "none") return null;
 
   return (
-    <section className="comments-rift mt-16 border-t border-border/40 pt-10">
+    <section className="comments-rift border-border/40 mt-16 border-t pt-10">
       {/* 区块标题 —— 与博客页眉保持一致的 eyebrow 处理 */}
       <div className="mb-6">
-        <p className="mb-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-muted-foreground mb-2 text-[10px] tracking-[0.2em] uppercase">
           评论 / Comments
         </p>
         <div className="rift-line h-0.5 w-full" aria-hidden="true" />
@@ -183,17 +183,17 @@ export default function Comments({ config }: Props) {
 
       {/* 状态提示（容器被评论脚本接管前显示） */}
       {status === "loading" && (
-        <p className="py-6 text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground py-6 text-center text-sm">
           正在加载评论…
         </p>
       )}
       {status === "error" && (
         <div className="flex flex-col items-center gap-3 py-6 text-center">
-          <p className="text-sm text-muted-foreground">{message}</p>
+          <p className="text-muted-foreground text-sm">{message}</p>
           <button
             type="button"
             onClick={() => setRetry((r) => r + 1)}
-            className="rounded-md border border-border/60 bg-card/50 px-3 py-1.5 text-xs text-foreground transition-colors hover:border-accent/60 hover:text-accent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            className="border-border/60 bg-card/50 text-foreground hover:border-accent/60 hover:text-accent focus-visible:ring-accent rounded-md border px-3 py-1.5 text-xs transition-colors focus:outline-none focus-visible:ring-1"
           >
             重试
           </button>

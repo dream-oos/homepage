@@ -35,11 +35,23 @@ export default function Typewriter({
   const [phase, setPhase] = useState<Phase>("loading");
 
   // 把配置存进 ref，effect 只在挂载时读取一次，避免依赖变化导致重新请求
-  const configRef = useRef({ fallback, typeSpeed, deleteSpeed, holdAfterTyped, holdAfterDeleted });
+  const configRef = useRef({
+    fallback,
+    typeSpeed,
+    deleteSpeed,
+    holdAfterTyped,
+    holdAfterDeleted,
+  });
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const { fallback, typeSpeed, deleteSpeed, holdAfterTyped, holdAfterDeleted } = configRef.current;
+    const {
+      fallback,
+      typeSpeed,
+      deleteSpeed,
+      holdAfterTyped,
+      holdAfterDeleted,
+    } = configRef.current;
     let active = true;
 
     const clear = () => {
@@ -102,12 +114,12 @@ export default function Typewriter({
   }, []);
 
   return (
-    <span className="inline-flex items-center min-h-[1.5em]">
+    <span className="inline-flex min-h-[1.5em] items-center">
       <span className="text-foreground/90">{text}</span>
       <span
         aria-hidden="true"
         className={
-          "typewriter-cursor ml-0.5 inline-block w-[2px] self-stretch bg-primary " +
+          "typewriter-cursor bg-primary ml-0.5 inline-block w-[2px] self-stretch " +
           (phase === "typing" || phase === "holding" ? "" : "is-blink")
         }
       />

@@ -1,14 +1,14 @@
 ## Development
 
-使用 `pnpm` 脚本管理常用操作，命令详情与项目架构见 [README.md](./README.md)：
+使用 `pnpm` 脚本管理常用操作，命令详情见 [README.md](./README.md)，项目文档见 [docs/INDEX.md](./docs/INDEX.md)：
 
-| 命令                     | 动作                                  |
-| :----------------------- | :------------------------------------ |
-| `pnpm install`           | 安装依赖                              |
-| `pnpm dev`               | 启动本地开发服务器 `localhost:4321`  |
-| `pnpm build`             | 构建生产站点到 `./dist/`             |
-| `pnpm preview`           | 本地预览构建产物                      |
-| `pnpm exec astro check`  | 类型检查                              |
+| 命令                    | 动作                                |
+| :---------------------- | :---------------------------------- |
+| `pnpm install`          | 安装依赖                            |
+| `pnpm dev`              | 启动本地开发服务器 `localhost:4321` |
+| `pnpm build`            | 构建生产站点到 `./dist/`            |
+| `pnpm preview`          | 本地预览构建产物                    |
+| `pnpm exec astro check` | 类型检查                            |
 
 ## 文档
 
@@ -23,4 +23,4 @@
 - [样式与 Tailwind](https://docs.astro.build/en/guides/styling/)
 - [多语言支持](https://docs.astro.build/en/guides/internationalization/)
 
-项目架构与博客详情见 [README.md](./README.md)。
+项目文档见 [docs/INDEX.md](./docs/INDEX.md)

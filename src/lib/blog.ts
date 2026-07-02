@@ -7,7 +7,9 @@
 
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
+import { formatDate } from "./format";
 
+export { formatDate };
 /** 博客文章类型 */
 export type BlogPost = CollectionEntry<"blog">;
 
@@ -93,21 +95,34 @@ export function readingTime(body: string): number {
  * @returns 已发布的文章列表
  */
 export async function getPublishedPosts(): Promise<BlogPost[]> {
-  const posts = await getCollection("blog", ({ data }: { data: { draft?: boolean } }) => !data.draft);
+  const posts = await getCollection(
+    "blog",
+    ({ data }: { data: { draft?: boolean } }) => !data.draft,
+  );
   return posts.sort(
-    (a: BlogPost, b: BlogPost) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+    (a: BlogPost, b: BlogPost) =>
+      b.data.pubDate.getTime() - a.data.pubDate.getTime(),
   );
 }
 
 /**
- * 将日期格式化为中文长格式。
- * @param date - 日期对象
- * @returns 格式化后的日期字符串，例如 "2026年6月29日"
+ * 获取某篇文章的相邻文章（上一篇 / 下一篇）。
+ *
+ * 列表按发布日期降序（较新在前），因此「上一篇」是日期更晚者，
+ * 「下一篇」是日期更早者。返回的对象仅包含列表展示所需的最小字段。
+ *
+ * @param posts - 已按日期降序排列的文章列表
+ * @param current - 当前文章 id
  */
-export function formatDate(date: Date): string {
-  return Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+export function getAdjacentPosts(
+  posts: BlogPost[],
+  current: string,
+): { newer: BlogPost | null; older: BlogPost | null } {
+  const index = posts.findIndex((p) => p.id === current);
+  if (index === -1) return { newer: null, older: null };
+  // index - 1 为日期更晚（较新），index + 1 为日期更早（较旧）
+  return {
+    newer: index > 0 ? posts[index - 1] : null,
+    older: index < posts.length - 1 ? posts[index + 1] : null,
+  };
 }

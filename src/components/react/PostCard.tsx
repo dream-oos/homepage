@@ -7,6 +7,7 @@
  * 的运行时依赖带入客户端 bundle。
  */
 import type { PostSummary } from "@/lib/blog";
+import { formatDate } from "@/lib/format";
 import { matchedIndices, splitByHits } from "@/lib/pinyin";
 
 interface Props {
@@ -15,15 +16,6 @@ interface Props {
   index: number;
   /** 当前搜索词，用于高亮命中片段；为空时不高亮 */
   query?: string;
-}
-
-/** 客户端日期格式化：与 lib/blog.formatDate 输出一致的中文长格式 */
-function formatDate(iso: string): string {
-  return Intl.DateTimeFormat("zh-CN", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(iso));
 }
 
 /** 渲染带高亮片段的文本 */
@@ -37,7 +29,7 @@ function Highlighted({ text, query }: { text: string; query: string }) {
         part.highlight ? (
           <mark
             key={i}
-            className="rounded-[2px] bg-primary/20 px-0.5 text-primary"
+            className="bg-primary/20 text-primary rounded-[2px] px-0.5"
           >
             {part.text}
           </mark>
@@ -53,10 +45,10 @@ export default function PostCard({ post, index, query = "" }: Props) {
   return (
     <a
       href={`/blog/${post.id}`}
-      className="group block rounded-xl border border-border/40 bg-card/50 p-5 transition-all duration-300 hover:border-primary/40 hover:bg-card/80 animate-in fade-in slide-in-from-bottom-4 duration-600 fill-mode-both"
+      className="group border-border/40 bg-card/50 hover:border-primary/40 hover:bg-card/80 animate-in fade-in slide-in-from-bottom-4 fill-mode-both block rounded-xl border p-5 transition-all duration-300 duration-600"
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+      <div className="text-muted-foreground flex flex-wrap items-center gap-3 text-xs">
         <time dateTime={post.pubDate}>{formatDate(post.pubDate)}</time>
         <span aria-hidden="true">·</span>
         <span>{post.minutes} 分钟阅读</span>
@@ -65,7 +57,7 @@ export default function PostCard({ post, index, query = "" }: Props) {
             {post.tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full border border-border/40 bg-card px-2 py-0.5 text-[10px] uppercase tracking-[0.08em] text-muted-foreground"
+                className="border-border/40 bg-card text-muted-foreground rounded-full border px-2 py-0.5 text-[10px] tracking-[0.08em] uppercase"
               >
                 <Highlighted text={tag} query={query} />
               </li>
@@ -73,10 +65,10 @@ export default function PostCard({ post, index, query = "" }: Props) {
           </ul>
         )}
       </div>
-      <h2 className="mt-2 font-heading text-lg font-semibold text-foreground transition-colors duration-300 group-hover:text-primary">
+      <h2 className="font-heading text-foreground group-hover:text-primary mt-2 text-lg font-semibold transition-colors duration-300">
         <Highlighted text={post.title} query={query} />
       </h2>
-      <p className="mt-1.5 line-clamp-2 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-1.5 line-clamp-2 text-sm">
         <Highlighted text={post.description} query={query} />
       </p>
     </a>

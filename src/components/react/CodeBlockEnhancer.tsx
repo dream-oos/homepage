@@ -79,16 +79,27 @@ export default function CodeBlockEnhancer() {
       const copyBtn = createButton(COPY_BTN_CLASS, "复制代码", ICON_COPY);
       toolbar.appendChild(copyBtn);
 
+      // 屏幕阅读器播报复制结果（视觉隐藏，仅供 SR 读取）
+      const status = document.createElement("span");
+      status.setAttribute("role", "status");
+      status.setAttribute("aria-live", "polite");
+      status.className = "sr-only";
+      toolbar.appendChild(status);
+
       const handleCopy = async () => {
         try {
           await navigator.clipboard.writeText(codeText);
           copyBtn.innerHTML = ICON_CHECK;
           copyBtn.style.color = "var(--accent)";
           copyBtn.title = "已复制";
+          copyBtn.setAttribute("aria-label", "已复制代码");
+          status.textContent = "已复制";
           window.setTimeout(() => {
             copyBtn.innerHTML = ICON_COPY;
             copyBtn.style.color = "";
             copyBtn.title = "复制代码";
+            copyBtn.setAttribute("aria-label", "复制代码");
+            status.textContent = "";
           }, 2000);
         } catch (err) {
           console.error("[CodeBlockEnhancer] 复制失败:", err);

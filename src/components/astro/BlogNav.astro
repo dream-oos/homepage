@@ -17,28 +17,32 @@ const { current } = Astro.props;
 const { site } = getSiteConfig();
 ---
 
-<nav class="fixed top-0 left-0 right-0 z-50 flex h-12 items-center justify-between border-b border-border/40 bg-background/70 px-6 backdrop-blur md:px-12">
+<nav
+  class="border-border/40 bg-background/70 fixed top-0 right-0 left-0 z-50 flex h-12 items-center justify-between border-b px-6 backdrop-blur md:px-12"
+>
   <a
     href="/"
-    class="font-heading text-sm font-semibold tracking-tight text-foreground transition-colors hover:text-primary"
+    class="font-heading text-foreground hover:text-primary text-sm font-semibold tracking-tight transition-colors"
   >
     {site.title}
   </a>
   <div class="flex items-center gap-6">
     <a
       href="/blog"
-      class="relative text-xs uppercase tracking-[0.15em] transition-colors hover:text-accent"
+      class="hover:text-accent relative text-xs tracking-[0.15em] uppercase transition-colors"
       class:list={{
         "text-accent": current === "blog",
         "text-muted-foreground": current !== "blog",
       }}
     >
       博客
-      {current === "blog" && (
-        <span class="absolute -bottom-[13px] left-1/2 h-px w-4 -translate-x-1/2 bg-accent"></span>
-      )}
+      {
+        current === "blog" && (
+          <span class="bg-accent absolute -bottom-[13px] left-1/2 h-px w-4 -translate-x-1/2" />
+        )
+      }
     </a>
-    
+
     <ThemeToggle />
   </div>
 </nav>

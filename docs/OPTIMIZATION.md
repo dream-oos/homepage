@@ -25,6 +25,7 @@
 | 4.1  | P1     | ThemeToggle aria 状态     | ✅ 已完成 |
 | 4.2  | P2     | 代码块复制 aria-live      | ✅ 已完成 |
 | 5.1  | P1     | 社交链接占位符修正        | ✅ 已完成 |
+| 6.1  | P2     | View Transitions          | ✅ 已完成 |
 | 6.2  | P2     | 文章上下篇导航            | ✅ 已完成 |
 | 6.3  | P2     | 背景遮罩配置失效修复      | ✅ 已完成 |
 | 7.1  | P1     | Prettier 格式化配置       | ✅ 已完成 |
@@ -190,11 +191,21 @@ import { z } from "astro/zod";
 
 ---
 
-## 八、未实施项
+## 八、功能增强（补充）
 
-以下项未在本轮实施，供后续按需推进：
+### 6.1 [P2] ✅ View Transitions
 
-- **6.1 View Transitions**：启用 Astro `<ClientRouter />` 实现页面间平滑过渡。代码已预留兼容（ThemeToggle 监听 `astro:page-load`、CodeBlockEnhancer 防重复增强），但 `BlogExplorer` 需配合 `transition:persist` 保持状态，改动较大建议单独测试。
+**问题**：页面间导航为整页刷新，背景图、顶栏等共享元素每次重新渲染有闪烁感。
+
+**实施**：`Layout.astro` 引入 `<ClientRouter />`（来自 `astro:transitions`）启用 View Transitions API，实现页面间平滑过渡。
+
+适配要点：
+
+- 背景层加 `transition:persist`，导航时保留背景图不重新加载。
+- `ThemeToggle.astro` 已监听 `astro:page-load` 重新绑定按钮（is:inline 脚本默认不重执行，靠事件驱动）。
+- `CodeBlockEnhancer` 不 persist，导航时重新挂载，`useEffect` 重跑增强新页面代码块（`dataset.enhanced` 防重复）。
+- `BlogExplorer` 不 persist，导航时重新挂载并读取 URL 恢复筛选状态（URL 状态同步设计正好支持）。
+- `ReadingNav` 不 persist，每篇文章重新挂载获取新 headings。
 
 ## 九、部署提醒
 

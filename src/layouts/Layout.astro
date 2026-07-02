@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import { ClientRouter } from "astro:transitions";
 import { getSiteConfig } from "@/lib/site";
 
 interface Props {
@@ -60,6 +61,8 @@ const ogImage = new URL(image, Astro.site ?? Astro.url).href;
     <meta name="twitter:image" content={ogImage} />
 
     <title>{title}</title>
+    <!-- View Transitions：页面间平滑过渡 -->
+    <ClientRouter />
     <style
       is:inline
       set:html={`:root{--bg-overlay-light:${background.overlayLight};--bg-overlay-dark:${background.overlayDark}}`}
@@ -103,8 +106,9 @@ const ogImage = new URL(image, Astro.site ?? Astro.url).href;
     </script>
   </head>
   <body>
-    <!-- 全局背景层 -->
+    <!-- 全局背景层（transition:persist：页面切换时保留，避免背景图重新加载闪烁） -->
     <div
+      transition:persist
       class="pointer-events-none fixed inset-0 -z-10 overflow-hidden select-none"
     >
       <img

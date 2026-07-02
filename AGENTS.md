@@ -23,4 +23,4 @@
 - [样式与 Tailwind](https://docs.astro.build/en/guides/styling/)
 - [多语言支持](https://docs.astro.build/en/guides/internationalization/)
 
-项目文档见 [docs/INDEX.md](./docs/INDEX.md)
+项目文档 [docs/INDEX.md](./docs/INDEX.md)

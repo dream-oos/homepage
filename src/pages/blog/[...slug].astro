@@ -43,7 +43,16 @@ const { newer, older } = getAdjacentPosts(allPosts, post.id);
   <BlogNav current="blog" />
 
   <main class="relative pt-12">
-    <article class="mx-auto max-w-2xl px-6 py-16">
+    <article class="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <!-- 返回博客（顶部） -->
+      <a
+        href="/blog"
+        class="text-muted-foreground hover:text-accent mb-8 inline-flex items-center gap-1 text-sm transition-colors"
+      >
+        <span aria-hidden="true">&larr;</span>
+        返回博客
+      </a>
+
       <!-- 文章头部 -->
       <header>
         <div
@@ -131,14 +140,6 @@ const { newer, older } = getAdjacentPosts(allPosts, post.id);
             )
           }
         </div>
-
-        <a
-          href="/blog"
-          class="text-muted-foreground hover:text-accent mt-6 inline-flex items-center gap-1 text-sm transition-colors"
-        >
-          <span aria-hidden="true">&larr;</span>
-          返回博客
-        </a>
       </nav>
 
       <!-- 评论系统（滚动进入视口后懒加载） -->
